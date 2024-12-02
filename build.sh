@@ -5,7 +5,7 @@ set -ouex pipefail
 RELEASE="$(rpm -E %fedora)"
 
 ### Modifications
-TODO
+# TODO
 # this installs a package from fedora repos
 #rpm-ostree install screen
 
