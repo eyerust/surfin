@@ -75,3 +75,20 @@ semodule -i /tmp/fix-iio-sensor-proxy.pp
 
 # Autostart service
 systemctl enable iio-sensor-proxy
+
+## Theme GTK3 apps with Adwaita
+
+# Install system-wide theme
+rpm-ostree install adw-gtk3-theme
+
+# Install flatpak
+flatpak install --system --noninteractive -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+
+# Configure theme
+cat > /usr/share/glib-2.0/schemas/00-custom-theme.gschema.override << EOF
+[org.gnome.desktop.interface]
+gtk-theme='adw-gtk3-dark'
+color-scheme='prefer-dark'
+EOF
+
+glib-compile-schemas /usr/share/glib-2.0/schemas/
