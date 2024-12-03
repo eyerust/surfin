@@ -25,11 +25,28 @@ KERNEL_TARGZ=$(jq -r '.layers[].digest' < /tmp/kernel-rpms/manifest.json | cut -
 tar -xvzf /tmp/kernel-rpms/"$KERNEL_TARGZ" -C /
 mv /tmp/rpms/* /tmp/kernel-rpms/
 
+# tmp/rpms/iptsd-3-1.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-core-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-default-watchdog-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-devel-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-devel-matched-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-modules-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-modules-core-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/kernel-surface-modules-extra-6.10.10-1.surface.fc40.x86_64.rpm
+# tmp/rpms/libwacom-surface-2.13.0-1.fc40.x86_64.rpm
+# tmp/rpms/libwacom-surface-data-2.13.0-1.fc40.noarch.rpm
+
 # Install Kernel
+# rpm-ostree install \
+    # /tmp/kernel-rpms/kernel-[0-9]*.rpm \
+    # /tmp/kernel-rpms/kernel-core-*.rpm \
+    # /tmp/kernel-rpms/kernel-modules-*.rpm
+
 rpm-ostree install \
-    /tmp/kernel-rpms/kernel-[0-9]*.rpm \
-    /tmp/kernel-rpms/kernel-core-*.rpm \
-    /tmp/kernel-rpms/kernel-modules-*.rpm
+    /tmp/kernel-rpms/kernel-surface-*.rpm \
+    /tmp/kernel-rpms/iptsd-*.rpm \
+    /tmp/kernel-rpms/libwacom-surface-*.rpm
 
 # Fetch Common AKMODS
 skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${AKMODS_FLAVOR}"-"$(rpm -E %fedora)"-"${KERNEL}" dir:/tmp/akmods
