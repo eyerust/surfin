@@ -99,3 +99,10 @@ glib-compile-schemas /usr/share/glib-2.0/schemas/
 curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable/mullvad.repo
 
 rpm-ostree install wireguard-tools
+
+# TODO: Maybe fix OOM Freeze if it happens maybe?
+
+## Install Howdy
+
+curl -L "https://copr.fedorainfracloud.org/coprs/principis/howdy/repo/fedora-$(rpm -E %fedora)/principis-howdy-fedora-$(rpm -E %fedora).repo" > /etc/yum.repos.d/howdy.repo
+rpm-ostree install howdy
