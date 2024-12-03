@@ -7,79 +7,27 @@ RELEASE="$(rpm -E %fedora)"
 ### Modifications
 # TODO
 
-## Pin Kernel
-# KERNEL="6.11.9-305.bazzite.fc41.x86_64"
-KERNEL="6.10.10-1.surface.fc40.x86_64"
+## Install/Pin Kernel
 
 # Remove Existing Kernel
+
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 do
     rpm --erase $pkg --nodeps
 done
 
-# Fetch Kernel
-# AKMODS_FLAVOR="bazzite"
-AKMODS_FLAVOR="surface"
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/"${AKMODS_FLAVOR}"-kernel:"${KERNEL}" dir:/tmp/kernel-rpms
-KERNEL_TARGZ=$(jq -r '.layers[].digest' < /tmp/kernel-rpms/manifest.json | cut -d : -f 2)
-tar -xvzf /tmp/kernel-rpms/"$KERNEL_TARGZ" -C /
-mv /tmp/rpms/* /tmp/kernel-rpms/
-
-# tmp/rpms/iptsd-3-1.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-core-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-default-watchdog-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-devel-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-devel-matched-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-modules-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-modules-core-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/kernel-surface-modules-extra-6.10.10-1.surface.fc40.x86_64.rpm
-# tmp/rpms/libwacom-surface-2.13.0-1.fc40.x86_64.rpm
-# tmp/rpms/libwacom-surface-data-2.13.0-1.fc40.noarch.rpm
-
-# Install Kernel
-# rpm-ostree install \
-    # /tmp/kernel-rpms/kernel-[0-9]*.rpm \
-    # /tmp/kernel-rpms/kernel-core-*.rpm \
-    # /tmp/kernel-rpms/kernel-modules-*.rpm
-
-# Erase libwacom-data and libwacom
-
 rpm --erase libwacom libwacom-data --nodeps
-
-rpm-ostree install \
-    /tmp/kernel-rpms/kernel-surface-*.rpm \
-    /tmp/kernel-rpms/iptsd-*.rpm \
-    /tmp/kernel-rpms/libwacom-surface-*.rpm
-
-# Fetch Common AKMODS
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${AKMODS_FLAVOR}"-"$(rpm -E %fedora)"-"${KERNEL}" dir:/tmp/akmods
-AKMODS_TARGZ=$(jq -r '.layers[].digest' < /tmp/akmods/manifest.json | cut -d : -f 2)
-tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
-mv /tmp/rpms/* /tmp/akmods/
-
-# Everyone
-sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
 
 for pkg in $(rpm -qa | grep -E 'kmod-xone|kmod-xpadneo|kmod-openrazer|kmod-framework-laptop|kmod-wl|kmod-v4l2loopback')
 do
     rpm --erase $pkg --nodeps
 done
 
-rpm-ostree install \
-    /tmp/akmods/kmods/*xone*.rpm \
-    /tmp/akmods/kmods/*xpadneo*.rpm \
-    /tmp/akmods/kmods/*openrazer*.rpm \
-    /tmp/akmods/kmods/*framework-laptop*.rpm
+# Install New Kernel
 
-# RPMFUSION Dependent AKMODS
-rpm-ostree install \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-rpm-ostree install \
-    broadcom-wl /tmp/akmods/kmods/*wl*.rpm \
-    v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
-rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
+curl -Lo /etc/yum.repos.d/linux-surface.repo https://pkg.surfacelinux.com/fedora/linux-surface.repo
+
+rpm-ostree install kernel-surface iptsd libwacom-surface libwacom-surface-data surface-secureboot
 
 ## Uninstall Asus Packages
 ASUS_PACKAGES=(
