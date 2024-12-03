@@ -8,7 +8,8 @@ RELEASE="$(rpm -E %fedora)"
 # TODO
 
 ## Pin Kernel
-KERNEL="6.11.9-305.bazzite.fc41.x86_64"
+# KERNEL="6.11.9-305.bazzite.fc41.x86_64"
+KERNEL="6.10.10-1.surface.fc40.x86_64"
 
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
@@ -111,3 +112,9 @@ rpm-ostree install wireguard-tools
 rpm-ostree install libcamera libcamera-tools libcamera-qcam libcamera-gstreamer libcamera-ipa pipewire-plugin-libcamera
 
 # TODO: Loopback
+
+# TODO: camera quality
+
+# TODO: Wireplumber doesn't use libcamera backend so no app can use the camera.
+
+# TODO: Make user configure howdy
