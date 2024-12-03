@@ -104,5 +104,10 @@ rpm-ostree install wireguard-tools
 
 ## Install Howdy
 
-curl -L "https://copr.fedorainfracloud.org/coprs/principis/howdy/repo/fedora-$(rpm -E %fedora)/principis-howdy-fedora-$(rpm -E %fedora).repo" > /etc/yum.repos.d/howdy.repo
-rpm-ostree install howdy
+# Already installed in Containerfile
+
+## Fix Camera
+
+rpm-ostree install libcamera libcamera-tools libcamera-qcam libcamera-gstreamer libcamera-ipa pipewire-plugin-libcamera
+
+# TODO: Loopback
