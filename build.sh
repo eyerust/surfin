@@ -65,3 +65,13 @@ ASUS_PACKAGES=(
 )
 
 rpm --erase "${ASUS_PACKAGES[@]}" --nodeps
+
+## Fix Screen Rotation
+
+# Install security policy
+checkmodule -M -m -o /tmp/fix-iio-sensor-proxy.mod /tmp/fix-iio-sensor-proxy.te
+semodule_package -o /tmp/fix-iio-sensor-proxy.pp -m /tmp/fix-iio-sensor-proxy.mod
+semodule -i /tmp/fix-iio-sensor-proxy.pp
+
+# Autostart service
+systemctl enable iio-sensor-proxy

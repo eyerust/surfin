@@ -1,0 +1,17 @@
+module fix-iio-sensor-proxy 1.0;
+
+require {
+	type syslogd_var_run_t;
+	type sysfs_t;
+	type iiosensorproxy_t;
+	type device_t;
+	class file { create write };
+	class dir { add_name search write };
+	class chr_file { open read };
+}
+
+#============= iiosensorproxy_t ==============
+allow iiosensorproxy_t device_t:chr_file { open read };
+allow iiosensorproxy_t sysfs_t:dir { add_name write };
+allow iiosensorproxy_t sysfs_t:file { create write };
+allow iiosensorproxy_t syslogd_var_run_t:dir search;
