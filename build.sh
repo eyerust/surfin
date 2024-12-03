@@ -93,3 +93,10 @@ color-scheme='prefer-dark'
 EOF
 
 glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+## Add Mullvad VPN and WireGuard stuff
+
+curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable/mullvad.repo
+rpm-ostree install mullvad-vpn
+
+rpm-ostree install wireguard-tools
