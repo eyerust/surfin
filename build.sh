@@ -8,7 +8,7 @@ RELEASE="$(rpm -E %fedora)"
 # TODO
 
 ## Pin Kernel
-KERNEL="6.11.9-305.fc41.x86_64"
+KERNEL="6.11.9-305.bazzite.fc41.x86_64"
 
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
