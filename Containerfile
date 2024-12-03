@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y \
 # Clone and build howdy
 RUN git clone https://github.com/boltgolt/howdy.git && \
     cd howdy && \
-    git checkout v2.6.1 && \
     meson setup build && \
     meson compile -C build && \
     DESTDIR=/tmp/howdy-install meson install -C build
