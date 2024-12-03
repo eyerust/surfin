@@ -1,5 +1,5 @@
 ARG SOURCE_IMAGE="bluefin"
-ARG SOURCE_SUFFIX="-surface"
+ARG SOURCE_SUFFIX="-hwe"
 ARG SOURCE_TAG="latest"
 
 FROM ghcr.io/ublue-os/${SOURCE_IMAGE}${SOURCE_SUFFIX}:${SOURCE_TAG}
