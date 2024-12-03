@@ -6,9 +6,56 @@ RELEASE="$(rpm -E %fedora)"
 
 ### Modifications
 # TODO
-# this installs a package from fedora repos
-#rpm-ostree install screen
 
-#### Example for enabling a System Unit File
+## Pin Kernel
+KERNEL="6.11.9-305.fc41.x86_64"
 
-#systemctl enable podman.socket
+# Remove Existing Kernel
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+do
+    rpm --erase $pkg --nodeps
+done
+
+# Fetch Kernel
+AKMODS_FLAVOR="bazzite"
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/"${AKMODS_FLAVOR}"-kernel:"$(rpm -E %fedora)"-"${KERNEL}" dir:/tmp/kernel-rpms
+KERNEL_TARGZ=$(jq -r '.layers[].digest' < /tmp/kernel-rpms/manifest.json | cut -d : -f 2)
+tar -xvzf /tmp/kernel-rpms/"$KERNEL_TARGZ" -C /
+mv /tmp/rpms/* /tmp/kernel-rpms/
+
+# Install Kernel
+rpm-ostree install \
+    /tmp/kernel-rpms/kernel-[0-9]*.rpm \
+    /tmp/kernel-rpms/kernel-core-*.rpm \
+    /tmp/kernel-rpms/kernel-modules-*.rpm
+
+# Fetch Common AKMODS
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${AKMODS_FLAVOR}"-"$(rpm -E %fedora)"-"${KERNEL}" dir:/tmp/akmods
+AKMODS_TARGZ=$(jq -r '.layers[].digest' < /tmp/akmods/manifest.json | cut -d : -f 2)
+tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
+mv /tmp/rpms/* /tmp/akmods/
+
+# Everyone
+sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
+rpm-ostree install \
+    /tmp/akmods/kmods/*xone*.rpm \
+    /tmp/akmods/kmods/*xpadneo*.rpm \
+    /tmp/akmods/kmods/*openrazer*.rpm \
+    /tmp/akmods/kmods/*framework-laptop*.rpm
+
+# RPMFUSION Dependent AKMODS
+rpm-ostree install \
+    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+rpm-ostree install \
+    broadcom-wl /tmp/akmods/kmods/*wl*.rpm \
+    v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
+rpm-ostree uninstall rpmfusion-free-release rpmfusion-nonfree-release
+
+## Uninstall Asus Packages
+ASUS_PACKAGES=(
+    asusctl
+    asusctl-rog-gui
+)
+
+rpm --erase "${ASUS_PACKAGES[@]}" --nodeps
