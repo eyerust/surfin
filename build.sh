@@ -82,6 +82,7 @@ systemctl enable iio-sensor-proxy
 rpm-ostree install adw-gtk3-theme
 
 # Install flatpak
+flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install --system --noninteractive -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
 
 # Configure theme
