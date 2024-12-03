@@ -43,6 +43,10 @@ mv /tmp/rpms/* /tmp/kernel-rpms/
     # /tmp/kernel-rpms/kernel-core-*.rpm \
     # /tmp/kernel-rpms/kernel-modules-*.rpm
 
+# Erase libwacom-data and libwacom
+
+rpm --erase libwacom libwacom-data --nodeps
+
 rpm-ostree install \
     /tmp/kernel-rpms/kernel-surface-*.rpm \
     /tmp/kernel-rpms/iptsd-*.rpm \
