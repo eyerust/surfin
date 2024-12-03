@@ -18,7 +18,8 @@ do
 done
 
 # Fetch Kernel
-AKMODS_FLAVOR="bazzite"
+# AKMODS_FLAVOR="bazzite"
+AKMODS_FLAVOR="surface"
 skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/"${AKMODS_FLAVOR}"-kernel:"$(rpm -E %fedora)"-"${KERNEL}" dir:/tmp/kernel-rpms
 KERNEL_TARGZ=$(jq -r '.layers[].digest' < /tmp/kernel-rpms/manifest.json | cut -d : -f 2)
 tar -xvzf /tmp/kernel-rpms/"$KERNEL_TARGZ" -C /
