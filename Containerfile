@@ -29,9 +29,25 @@ FROM ghcr.io/ublue-os/${SOURCE_IMAGE}${SOURCE_SUFFIX}:${SOURCE_TAG}
 # Copy built files from builder
 COPY --from=builder /tmp/howdy-install/ /
 
-COPY build.sh /tmp/build.sh
-COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
-
+# Undo Bluefin changes
+COPY ./undo_bluefin_changes.sh /tmp/undo_bluefin_changes.sh
 RUN mkdir -p /var/lib/alternatives && \
-    /tmp/build.sh && \
+    /tmp/undo_bluefin_changes.sh && \
+    ostree container commit
+
+# Install Linux Surface
+COPY ./install_linux_surface.sh /tmp/install_linux_surface.sh
+RUN mkdir -p /var/lib/alternatives && \
+    /tmp/install_linux_surface.sh && \
+    ostree container commit
+
+# Initramfs
+COPY ./initramfs.sh /tmp/initramfs.sh
+RUN /tmp/initramfs.sh && \
+    ostree container commit
+
+# Additional changes
+COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
+COPY ./additional_changes.sh /tmp/additional_changes.sh
+RUN /tmp/additional_changes.sh && \
     ostree container commit
