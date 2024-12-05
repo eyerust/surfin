@@ -17,7 +17,7 @@ repo_gpgcheck=0
 EOF
 
 # Fetch Kernel
-KERNEL_VERSION="6.10.10-1"
+KERNEL_VERSION="6.9.12-1"
 mkdir -p /tmp/kernel
 curl -s https://pkg.surfacelinux.com/fedora/f40/ | grep -o 'href=".*rpm' | sed 's/href="//g' | grep 'kernel' | grep $KERNEL_VERSION | \
 while read file; do
