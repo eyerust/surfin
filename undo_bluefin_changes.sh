@@ -3,22 +3,22 @@
 set -ouex pipefail
 
 # Remove Repos
-rm -f /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo
-rm -f /etc/yum.repos.d/linux-surface.repo
+rm /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo
+rm /etc/yum.repos.d/linux-surface.repo
 
 # Remove packages
 ASUS_PACKAGES=(
-    # asusctl
-    # asusctl-rog-gui
+    asusctl
+    asusctl-rog-gui
 )
 
 SURFACE_PACKAGES=(
     iptsd
-    # libcamera
-    # libcamera-tools
-    # libcamera-gstreamer
-    # libcamera-ipa
-    # pipewire-plugin-libcamera
+    libcamera
+    libcamera-tools
+    libcamera-gstreamer
+    libcamera-ipa
+    pipewire-plugin-libcamera
 )
 
 rpm --erase --nodeps \
@@ -26,10 +26,10 @@ rpm --erase --nodeps \
     "${SURFACE_PACKAGES[@]}"
 
 # Remove modules
-# rm /usr/lib/modules-load.d/ublue-surface.conf
+rm /usr/lib/modules-load.d/ublue-surface.conf
 
 # Remove Kernel
-for pkg in kernel-surface kernel-surface-core kernel-surface-modules kernel-surface-modules-core
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 do
     rpm --erase $pkg --nodeps
 done

@@ -37,23 +37,23 @@ rpm-ostree install \
     /tmp/kernel/kernel-surface-devel-[0-9]*.rpm
 
 # Fetch IPTSD
-# IPTSD_VERSION="3-1"
-# IPTSD_FEDORA_VERSION="f41"
-# mkdir -p /tmp/iptsd
-# curl -s https://pkg.surfacelinux.com/fedora/$IPTSD_FEDORA_VERSION/ | grep -o 'href=".*rpm' | sed 's/href="//g' | grep 'iptsd' | grep $IPTSD_VERSION | \
-# while read file; do
-#     echo "Downloading $file..."
-#     wget -q "https://pkg.surfacelinux.com/fedora/$IPTSD_FEDORA_VERSION/$file" -P /tmp/iptsd
-# done
-# ls /tmp/iptsd
+IPTSD_VERSION="3-1"
+IPTSD_FEDORA_VERSION="f41"
+mkdir -p /tmp/iptsd
+curl -s https://pkg.surfacelinux.com/fedora/$IPTSD_FEDORA_VERSION/ | grep -o 'href=".*rpm' | sed 's/href="//g' | grep 'iptsd' | grep $IPTSD_VERSION | \
+while read file; do
+    echo "Downloading $file..."
+    wget -q "https://pkg.surfacelinux.com/fedora/$IPTSD_FEDORA_VERSION/$file" -P /tmp/iptsd
+done
+ls /tmp/iptsd
 
-# # Install IPTSD
-# rpm-ostree install \
-#     /tmp/iptsd/iptsd-[0-9]*.rpm
+# Install IPTSD
+rpm-ostree install \
+    /tmp/iptsd/iptsd-[0-9]*.rpm
 
 ## Libwacom
 # Erase if installed
-rpm --erase libwacom-surface libwacom-surface-data --nodeps
+rpm --erase libwacom libwacom-data --nodeps
 
 # Fetch Libwacom Surface
 LIBWACOM_VERSION='2.13.0-2'
