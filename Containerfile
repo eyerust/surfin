@@ -31,5 +31,5 @@ COPY --from=builder /tmp/howdy-install/ /
 
 # Apply changes
 COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
-COPY ./build /tmp/build.sh
+COPY ./build.sh /tmp/build.sh
 RUN /tmp/build.sh && ostree container commit
