@@ -46,11 +46,11 @@ RULE_FILE="99-surface-pen-as-touch-or-tablet.rules"
 RULE_PATH="/usr/lib/udev/rules.d/$RULE_FILE"
 
 cat > "$RULE_PATH" << 'EOF'
-ACTION=="add", SUBSYSTEM=="input", \
+ACTION=="add|change", SUBSYSTEM=="input", \
 ATTR{name}=="*[Ss]tylus*", \
 ENV{ID_INPUT_TABLET}=="1", \
-PROGRAM="/bin/cat /var/run/pen-mode-state", \
-RESULT=="touch", \
+IMPORT{file}="/var/run/pen-mode-state", \
+ENV{pen_mode}=="touch", \
 ENV{ID_INPUT_TABLET}="0", \
 ENV{ID_INPUT_TOUCHSCREEN}="1"
 EOF
@@ -65,18 +65,19 @@ STATE_FILE="/var/run/pen-mode-state"
 
 # Initialize state file if it doesn't exist
 if [ ! -f "$STATE_FILE" ]; then
-    echo "touch" > "$STATE_FILE"
+    echo "pen_mode=touch" > "$STATE_FILE"
 fi
 
 # Toggle state
-current_state=$(cat "$STATE_FILE")
-if [ "$current_state" = "touch" ]; then
-    echo "tablet" > "$STATE_FILE"
-    # Set tablet mode
+# Source the state file to get the current pen_mode variable
+source "$STATE_FILE"
+
+# Toggle state
+if [ "$pen_mode" = "touch" ]; then
+    echo "pen_mode=tablet" > "$STATE_FILE"
     udevadm trigger --subsystem-match=input
 else
-    echo "touch" > "$STATE_FILE"
-    # Set touch mode
+    echo "pen_mode=touch" > "$STATE_FILE"
     udevadm trigger --subsystem-match=input
 fi
 EOF
@@ -151,6 +152,9 @@ After=bluetooth.service
 [Service]
 ExecStart=$BUTTON_SCRIPT
 Restart=always
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
