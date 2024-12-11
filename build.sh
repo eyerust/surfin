@@ -78,11 +78,19 @@ source "$STATE_FILE"
 if [ "$pen_mode" = "touch" ]; then
     echo "pen_mode=tablet" > "$STATE_FILE"
     udevadm trigger --subsystem-match=input
+    udevadm trigger --action=remove --subsystem-match=input --property-match=NAME="*ELAN*"
+    udevadm trigger --action=remove --subsystem-match=input --property-match=NAME="*I2C*"
+    udevadm trigger --action=add --subsystem-match=input
 else
     echo "pen_mode=touch" > "$STATE_FILE"
     udevadm trigger --subsystem-match=input
+    udevadm trigger --action=remove --subsystem-match=input --property-match=NAME="*ELAN*"
+    udevadm trigger --action=remove --subsystem-match=input --property-match=NAME="*I2C*"
+    udevadm trigger --action=add --subsystem-match=input
 fi
 EOF
+
+# TODO: Find better solution instead of restarting input system because delay too long.
 
 chmod +x "$SCRIPT_PATH"
 
@@ -168,6 +176,6 @@ systemctl enable pen-button-monitor
 
 rpm-ostree install python3-evdev libnotify
 
-# Visual feedback
+# TODO: Visual feedback.
 
 echo "Done"
