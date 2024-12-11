@@ -2,7 +2,10 @@
 
 set -ouex pipefail
 
-## Fix Screen Rotation
+## 1. Remove ASUS
+rpm --erase --nodeps asusctl asusctl-rog-gui
+
+## 2. Fix Screen Rotation
 
 # Install security policy
 checkmodule -M -m -o /tmp/fix-iio-sensor-proxy.mod /tmp/fix-iio-sensor-proxy.te
@@ -12,7 +15,7 @@ semodule -i /tmp/fix-iio-sensor-proxy.pp
 # Autostart service
 systemctl enable iio-sensor-proxy
 
-## Theme GTK3 apps with Adwaita
+## 3. Theme GTK3 apps with Adwaita
 
 # Install system-wide theme
 rpm-ostree install adw-gtk3-theme
@@ -30,12 +33,10 @@ EOF
 
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-## Add Mullvad VPN Repo and WireGuard stuff
+## 4. Add Mullvad VPN Repo and WireGuard stuff
 
 curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable/mullvad.repo
 
 rpm-ostree install wireguard-tools
-
-# TODO: Maybe fix OOM Freeze if it happens maybe?
 
 echo "Done"

@@ -1,10 +1,9 @@
 ARG SOURCE_IMAGE="bluefin"
 ARG SOURCE_SUFFIX="-hwe"
-ARG SOURCE_TAG="41-20241202.2"
-
-FROM ubuntu:24.04 AS builder
+ARG SOURCE_TAG="41-20241210.2"
 
 ## Build Howdy
+FROM ubuntu:24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -24,30 +23,13 @@ RUN git clone https://github.com/boltgolt/howdy.git && \
     meson compile -C build && \
     DESTDIR=/tmp/howdy-install meson install -C build
 
+## Build the final image
 FROM ghcr.io/ublue-os/${SOURCE_IMAGE}${SOURCE_SUFFIX}:${SOURCE_TAG}
 
 # Copy built files from builder
 COPY --from=builder /tmp/howdy-install/ /
 
-# Undo Bluefin changes
-COPY ./undo_bluefin_changes.sh /tmp/undo_bluefin_changes.sh
-RUN mkdir -p /var/lib/alternatives && \
-    /tmp/undo_bluefin_changes.sh && \
-    ostree container commit
-
-# Install Linux Surface
-COPY ./install_linux_surface.sh /tmp/install_linux_surface.sh
-RUN mkdir -p /var/lib/alternatives && \
-    /tmp/install_linux_surface.sh && \
-    ostree container commit
-
-# Initramfs
-COPY ./initramfs.sh /tmp/initramfs.sh
-RUN /tmp/initramfs.sh && \
-    ostree container commit
-
-# Additional changes
+# Apply changes
 COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
-COPY ./additional_changes.sh /tmp/additional_changes.sh
-RUN /tmp/additional_changes.sh && \
-    ostree container commit
+COPY ./build /tmp/build.sh
+RUN /tmp/build.sh && ostree container commit
