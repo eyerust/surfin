@@ -39,4 +39,19 @@ curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable
 
 rpm-ostree install wireguard-tools
 
+## 5. Microsoft Surface Pen should be not like a tablet
+
+RULE_FILE="99-surface-pen-as-touch.rules"
+RULE_PATH="/usr/lib/udev/rules.d/$RULE_FILE"
+
+cat > "$RULE_PATH" << 'EOF'
+ACTION=="add", SUBSYSTEM=="input", \
+ATTR{name}=="*[Ss]tylus*", \
+ENV{ID_INPUT_TABLET}=="1", \
+ENV{ID_INPUT_TABLET}="0", \
+ENV{ID_INPUT_TOUCHSCREEN}="1"
+EOF
+
+chmod 644 "$RULE_PATH"
+
 echo "Done"
