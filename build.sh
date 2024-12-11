@@ -91,30 +91,49 @@ cat > "$BUTTON_SCRIPT" << 'EOF'
 from evdev import InputDevice, categorize, ecodes
 import sys
 import os
+import time
+from datetime import datetime
+
+def log(message):
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"[{timestamp}] {message}")
 
 def find_pen_keyboard():
     from evdev import list_devices, InputDevice
     for path in list_devices():
-        device = InputDevice(path)
-        if "surface pen keyboard" in device.name.lower():
-            return device
+        try:
+            device = InputDevice(path)
+            if "surface pen keyboard" in device.name.lower():
+                log(f"Found device: {device.name}")
+                return device
+        except PermissionError:
+            continue
     return None
 
 def main():
-    device = find_pen_keyboard()
-    if not device:
-        print("Surface Pen keyboard not found!")
-        sys.exit(1)
-
-    print(f"Watching {device.name}")
-    meta_pressed = False
-
-    for event in device.read_loop():
-        if event.type == ecodes.EV_KEY:
-            if event.code == ecodes.KEY_LEFTMETA:
-                meta_pressed = event.value == 1
-            elif event.code == ecodes.KEY_F20 and event.value == 1 and meta_pressed:
-                os.system('/usr/local/bin/toggle-pen-mode.sh')
+    while True:
+        device = find_pen_keyboard()
+        if device:
+            log(f"Watching {device.name}")
+            try:
+                meta_pressed = False
+                for event in device.read_loop():
+                    if event.type == ecodes.EV_KEY:
+                        key_event = categorize(event)
+                        log(f"Key event: {key_event.keycode}, value: {event.value}")
+                        
+                        if event.code == ecodes.KEY_LEFTMETA:
+                            meta_pressed = event.value == 1
+                            log(f"Meta key {'pressed' if meta_pressed else 'released'}")
+                        elif event.code == ecodes.KEY_F20 and event.value == 1 and meta_pressed:
+                            log("Toggling pen mode...")
+                            os.system('/usr/local/bin/toggle-pen-mode.sh')
+            except OSError:
+                log("Device disconnected. Waiting for reconnection...")
+        else:
+            log("Waiting for Surface Pen keyboard...")
+        
+        time.sleep(2)
 
 if __name__ == "__main__":
     main()
