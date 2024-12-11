@@ -48,8 +48,10 @@ RULE_PATH="/usr/lib/udev/rules.d/$RULE_FILE"
 cat > "$RULE_PATH" << 'EOF'
 ACTION=="add|change", SUBSYSTEM=="input", \
 ATTR{name}=="*[Ss]tylus*", \
-ENV{ID_INPUT_TABLET}=="1", \
-IMPORT{file}="/var/run/pen-mode-state", \
+IMPORT{file}="/var/run/pen-mode-state"
+
+ACTION=="add|change", SUBSYSTEM=="input", \
+ATTR{name}=="*[Ss]tylus*", \
 ENV{pen_mode}=="touch", \
 ENV{ID_INPUT_TABLET}="0", \
 ENV{ID_INPUT_TOUCHSCREEN}="1"
