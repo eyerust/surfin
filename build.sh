@@ -39,19 +39,110 @@ curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable
 
 rpm-ostree install wireguard-tools
 
-## 5. Microsoft Surface Pen should be not like a tablet
+## 5. Microsoft Surface Pen should be tablet or touch
 
-RULE_FILE="99-surface-pen-as-touch.rules"
+# Udev rule for Surface Pen
+RULE_FILE="99-surface-pen-as-touch-or-tablet.rules"
 RULE_PATH="/usr/lib/udev/rules.d/$RULE_FILE"
 
 cat > "$RULE_PATH" << 'EOF'
 ACTION=="add", SUBSYSTEM=="input", \
 ATTR{name}=="*[Ss]tylus*", \
 ENV{ID_INPUT_TABLET}=="1", \
+PROGRAM="/bin/cat /var/run/pen-mode-state", \
+RESULT=="touch", \
 ENV{ID_INPUT_TABLET}="0", \
 ENV{ID_INPUT_TOUCHSCREEN}="1"
 EOF
 
 chmod 644 "$RULE_PATH"
+
+# Script to switch mode
+SCRIPT_PATH="/usr/local/bin/toggle-pen-mode.sh"
+cat > "$SCRIPT_PATH" << 'EOF'
+#!/bin/bash
+STATE_FILE="/var/run/pen-mode-state"
+
+# Initialize state file if it doesn't exist
+if [ ! -f "$STATE_FILE" ]; then
+    echo "touch" > "$STATE_FILE"
+fi
+
+# Toggle state
+current_state=$(cat "$STATE_FILE")
+if [ "$current_state" = "touch" ]; then
+    echo "tablet" > "$STATE_FILE"
+    # Set tablet mode
+    udevadm trigger --subsystem-match=input
+else
+    echo "touch" > "$STATE_FILE"
+    # Set touch mode
+    udevadm trigger --subsystem-match=input
+fi
+EOF
+
+chmod +x "$SCRIPT_PATH"
+
+# On eraser button press, toggle pen mode
+# Python script to handle eraser button
+BUTTON_SCRIPT="/usr/local/bin/pen-button-monitor.py"
+cat > "$BUTTON_SCRIPT" << 'EOF'
+#!/usr/bin/env python3
+from evdev import InputDevice, categorize, ecodes
+import sys
+import os
+
+def find_pen_keyboard():
+    from evdev import list_devices, InputDevice
+    for path in list_devices():
+        device = InputDevice(path)
+        if "surface pen keyboard" in device.name.lower():
+            return device
+    return None
+
+def main():
+    device = find_pen_keyboard()
+    if not device:
+        print("Surface Pen keyboard not found!")
+        sys.exit(1)
+
+    print(f"Watching {device.name}")
+    meta_pressed = False
+
+    for event in device.read_loop():
+        if event.type == ecodes.EV_KEY:
+            if event.code == ecodes.KEY_LEFTMETA:
+                meta_pressed = event.value == 1
+            elif event.code == ecodes.KEY_F20 and event.value == 1 and meta_pressed:
+                os.system('/usr/local/bin/toggle-pen-mode.sh')
+
+if __name__ == "__main__":
+    main()
+EOF
+
+chmod +x "$BUTTON_SCRIPT"
+
+# Create systemd service
+SERVICE_FILE="/etc/systemd/system/pen-button-monitor.service"
+cat > "$SERVICE_FILE" << EOF
+[Unit]
+Description=Surface Pen Button Monitor
+After=bluetooth.service
+
+[Service]
+ExecStart=$BUTTON_SCRIPT
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+chmod 644 "$SERVICE_FILE"
+
+systemctl enable pen-button-monitor
+
+rpm-ostree install python3-evdev libnotify
+
+# Visual feedback
 
 echo "Done"
