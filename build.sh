@@ -178,4 +178,20 @@ rpm-ostree install python3-evdev libnotify
 
 # TODO: Visual feedback.
 
+# TODO: Initial state weird. is it first touch or tablet?
+
+## 6. Fix Camera
+
+# Config to enable libcamera and disable v4l2
+cat > /usr/share/wireplumber/wireplumber.conf.d/99-enable-camera.conf << 'EOF'
+wireplumber.profiles = {
+  main = {
+    monitor.libcamera = enabled,
+    monitor.v4l2 = disabled,
+  }
+}
+EOF
+
+# TODO loopback, configure
+
 echo "Done"
