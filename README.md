@@ -1,9 +1,7 @@
 # Surfin
 
-TODO
-
-Bluefin with some configuration for Surface devices.
+Bluefin with some configuration for more pleasant experience on Surface devices.
 
 Intended for personal use.
 
-TODO: Instructions for rebase
+To rebase: `sudo bootc switch ghcr.io/eyerust/surfin:latest --enforce-container-sigpolicy`

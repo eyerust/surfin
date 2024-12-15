@@ -200,6 +200,8 @@ EOF
 
 rpm-ostree install powertop tlp
 
+systemctl enable tlp
+
 echo "Done"
 
 # TODO: Maybe fix OOM Freeze if it happens maybe?
