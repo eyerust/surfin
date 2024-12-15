@@ -180,18 +180,26 @@ rpm-ostree install python3-evdev libnotify
 
 # TODO: Initial state weird. is it first touch or tablet?
 
-## 6. Fix Camera
+## 6. Fix Camera and Howdy
 
-# Config to enable libcamera and disable v4l2
-cat > /usr/share/wireplumber/wireplumber.conf.d/99-enable-camera.conf << 'EOF'
-wireplumber.profiles = {
-  main = {
-    monitor.libcamera = enabled,
-    monitor.v4l2 = disabled,
-  }
-}
+# TODO: Fix camera maybe when its not so much of a pain anymore. Currently just leave it disabled.
+# TODO: Fix howdy when camera works.
+
+## 7. Fix raw thumbnailer
+
+rpm-ostree install ufraw
+
+cat >  /usr/share/thumbnailers/ufraw.thumbnailer << EOF
+[Thumbnailer Entry]
+TryExec=ufraw-batch
+Exec=ufraw-batch --silent --size %s --out-type=png --noexif --output=%o --overwrite --embedded-image %i
+MimeType=image/x-3fr;image/x-adobe-dng;image/x-arw;image/x-bay;image/x-canon-cr2;image/x-canon-cr3;image/x-canon-crw;image/x-cap;image/x-cr2;image/x-cr3;image/x-crw;image/x-dcr;image/x-dcraw;image/x-dcs;image/x-dng;image/x-drf;image/x-eip;image/x-erf;image/x-fff;image/x-fuji-raf;image/x-iiq;image/x-k25;image/x-kdc;image/x-mef;image/x-minolta-mrw;image/x-mos;image/x-mrw;image/x-nef;image/x-nikon-nef;image/x-nrw;image/x-olympus-orf;image/x-orf;image/x-panasonic-raw;image/x-pef;image/x-pentax-pef;image/x-ptx;image/x-pxn;image/x-r3d;image/x-raf;image/x-raw;image/x-rw2;image/x-rwl;image/x-rwz;image/x-sigma-x3f;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-sr2;image/x-srf;image/x-x3f;
 EOF
 
-# TODO loopback, configure
+## 8. Fix battery life
+
+rpm-ostree install powertop tlp
 
 echo "Done"
+
+# TODO: Maybe fix OOM Freeze if it happens maybe?
