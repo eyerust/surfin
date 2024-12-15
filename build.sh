@@ -61,7 +61,7 @@ chmod 644 "$RULE_PATH"
 
 # Script to switch mode
 SCRIPT_PATH="/usr/local/bin/toggle-pen-mode.sh"
-cat > "$SCRIPT_PATH" << 'EOF'
+cat > $SCRIPT_PATH << 'EOF'
 #!/bin/bash
 STATE_FILE="/var/run/pen-mode-state"
 
