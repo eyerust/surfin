@@ -37,7 +37,7 @@ glib-compile-schemas /usr/share/glib-2.0/schemas/
 
 curl -Lo /etc/yum.repos.d/mullvad.repo https://repository.mullvad.net/rpm/stable/mullvad.repo
 
-rpm-ostree install wireguard-tools
+rpm-ostree install wireguard-tools mullvad-vpn
 
 ## 5. Microsoft Surface Pen should be tablet or touch
 
@@ -201,6 +201,8 @@ EOF
 rpm-ostree install powertop tlp
 
 systemctl enable tlp
+
+# TODO: Surface doesn't go into deep sleep. set option to 'deep'
 
 echo "Done"
 
