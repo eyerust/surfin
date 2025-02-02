@@ -197,10 +197,11 @@ MimeType=image/x-3fr;image/x-adobe-dng;image/x-arw;image/x-bay;image/x-canon-cr2
 EOF
 
 ## 8. Fix battery life
+# TODO: Maybe reactivate tlp in the future. currently it seems buggy.
+# rpm-ostree install powertop tlp
 
-rpm-ostree install powertop tlp
-
-systemctl enable tlp
+# systemctl enable tlp
+systemctl disable tlp
 
 # TODO: Surface doesn't go into deep sleep. set option to 'deep'
 
