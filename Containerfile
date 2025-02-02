@@ -17,17 +17,17 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Clone and build howdy
-RUN git clone https://github.com/boltgolt/howdy.git && \
-    cd howdy && \
-    meson setup build && \
-    meson compile -C build && \
-    DESTDIR=/tmp/howdy-install meson install -C build
+#RUN git clone https://github.com/boltgolt/howdy.git && \
+#    cd howdy && \
+#    meson setup build && \
+#    meson compile -C build && \
+#    DESTDIR=/tmp/howdy-install meson install -C build
 
 ## Build the final image
 FROM ghcr.io/ublue-os/${SOURCE_IMAGE}${SOURCE_SUFFIX}:${SOURCE_TAG}
 
 # Copy built files from builder
-COPY --from=builder /tmp/howdy-install/ /
+#COPY --from=builder /tmp/howdy-install/ /
 
 # Apply changes
 COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
