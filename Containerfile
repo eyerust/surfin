@@ -1,6 +1,6 @@
 ARG SOURCE_IMAGE="bluefin"
 ARG SOURCE_SUFFIX="-hwe"
-ARG SOURCE_TAG="41-20241210.2"
+ARG SOURCE_TAG="41-20250202"
 
 ## Build Howdy
 FROM ubuntu:24.04 AS builder
@@ -17,17 +17,18 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Clone and build howdy
-#RUN git clone https://github.com/boltgolt/howdy.git && \
-#    cd howdy && \
-#    meson setup build && \
-#    meson compile -C build && \
-#    DESTDIR=/tmp/howdy-install meson install -C build
+RUN git clone https://github.com/boltgolt/howdy.git && \
+    cd howdy && \
+    git checkout 03e3efaee29db784d9781befede3a34ef8a3d92e && \
+    meson setup build && \
+    meson compile -C build && \
+    DESTDIR=/tmp/howdy-install meson install -C build
 
 ## Build the final image
 FROM ghcr.io/ublue-os/${SOURCE_IMAGE}${SOURCE_SUFFIX}:${SOURCE_TAG}
 
 # Copy built files from builder
-#COPY --from=builder /tmp/howdy-install/ /
+COPY --from=builder /tmp/howdy-install/ /
 
 # Apply changes
 COPY fix-iio-sensor-proxy.te /tmp/fix-iio-sensor-proxy.te
