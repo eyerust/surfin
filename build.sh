@@ -189,7 +189,15 @@ rpm-ostree install python3-evdev libnotify
 
 ## 7. Fix raw thumbnailer
 
-rpm-ostree install ufraw
+wget https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Everything/x86_64/os/Packages/u/ufraw-0.23-0.25.20210425.fc41.x86_64.rpm
+wget https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Everything/x86_64/os/Packages/u/ufraw-common-0.23-0.25.20210425.fc41.x86_64.rpm
+
+rpm-ostree install ufraw-0.23-0.25.20210425.fc41.x86_64.rpm ufraw-common-0.23-0.25.20210425.fc41.x86_64.rpm
+
+rm ufraw-0.23-0.25.20210425.fc41.x86_64.rpm
+rm ufraw-common-0.23-0.25.20210425.fc41.x86_64.rpm
+
+#rpm-ostree install ufraw
 
 cat >  /usr/share/thumbnailers/ufraw.thumbnailer << EOF
 [Thumbnailer Entry]
