@@ -185,6 +185,8 @@ rpm-ostree install python3-evdev libnotify
 # TODO: Fix camera maybe when its not so much of a pain anymore. Currently just leave it disabled.
 # TODO: Fix howdy when camera works.
 
+# TODO: Regarding the camera: In this one email someone seems to have found yaml config files for the cameras.
+
 ## 7. Fix raw thumbnailer
 
 rpm-ostree install ufraw
