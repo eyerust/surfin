@@ -1,6 +1,6 @@
 ARG SOURCE_IMAGE="bluefin"
 ARG SOURCE_SUFFIX="-hwe"
-ARG SOURCE_TAG="41-20250202"
+ARG SOURCE_TAG="42-20250513"
 
 ## Build Howdy
 FROM ubuntu:24.04 AS builder
