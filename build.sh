@@ -90,8 +90,6 @@ else
 fi
 EOF
 
-# TODO: Find better solution instead of restarting input system because delay too long.
-
 chmod +x "$SCRIPT_PATH"
 
 # On eraser button press, toggle pen mode
@@ -176,16 +174,9 @@ systemctl enable pen-button-monitor
 
 rpm-ostree install python3-evdev libnotify
 
-# TODO: Visual feedback.
-
-# TODO: Initial state weird. is it first touch or tablet?
-
 ## 6. Fix Camera and Howdy
 
-# TODO: Fix camera maybe when its not so much of a pain anymore. Currently just leave it disabled.
-# TODO: Fix howdy when camera works.
-
-# TODO: Regarding the camera: In this one email someone seems to have found yaml config files for the cameras.
+# NOTE: Impossible currently.
 
 ## 7. Fix raw thumbnailer
 
@@ -206,15 +197,6 @@ Exec=ufraw-batch --silent --size %s --out-type=png --noexif --output=%o --overwr
 MimeType=image/x-3fr;image/x-adobe-dng;image/x-arw;image/x-bay;image/x-canon-cr2;image/x-canon-cr3;image/x-canon-crw;image/x-cap;image/x-cr2;image/x-cr3;image/x-crw;image/x-dcr;image/x-dcraw;image/x-dcs;image/x-dng;image/x-drf;image/x-eip;image/x-erf;image/x-fff;image/x-fuji-raf;image/x-iiq;image/x-k25;image/x-kdc;image/x-mef;image/x-minolta-mrw;image/x-mos;image/x-mrw;image/x-nef;image/x-nikon-nef;image/x-nrw;image/x-olympus-orf;image/x-orf;image/x-panasonic-raw;image/x-pef;image/x-pentax-pef;image/x-ptx;image/x-pxn;image/x-r3d;image/x-raf;image/x-raw;image/x-rw2;image/x-rwl;image/x-rwz;image/x-sigma-x3f;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-sr2;image/x-srf;image/x-x3f;
 EOF
 
-## 8. Fix battery life
-# TODO: Maybe reactivate tlp in the future. currently it seems buggy.
-# rpm-ostree install powertop tlp
-
-# systemctl enable tlp
-systemctl disable tlp
-
 # TODO: Surface doesn't go into deep sleep. set option to 'deep'
 
 echo "Done"
-
-# TODO: Maybe fix OOM Freeze if it happens maybe?
